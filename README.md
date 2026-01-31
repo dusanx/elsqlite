@@ -103,12 +103,13 @@ M-x sqlite-browser RET   ;; alias
 
 **Auto-open .db files (optional):**
 
-Vanilla Emacs - add to `init.el`:
+Vanilla Emacs - add to `init.el` (after the `require` line from installation):
 ```elisp
-(with-eval-after-load 'elsqlite
-  (elsqlite-enable-auto-open))
+(add-to-list 'load-path "/path/to/elsqlite")
+(require 'elsqlite)
+(elsqlite-enable-auto-open)  ; Optional: auto-open .db files
 
-;; To disable: M-x elsqlite-disable-auto-open
+;; To disable later: M-x elsqlite-disable-auto-open
 ```
 
 Doom Emacs - already configured if you followed installation step 2 above.
@@ -166,7 +167,7 @@ Doom Emacs - add to `config.el`:
 2. **Browse a table**: Move to a table and press `RET`
    - Table contents appear in the results panel
    - SQL panel updates to show `SELECT * FROM tablename LIMIT 50 OFFSET 0`
-   - Mode line shows `[Edit: tablename]` (editable) or `[Browse: tablename]` (read-only)
+   - Mode line shows `ELSQLite[database.db] [tablename]`
 
 3. **Navigate columns**: Use `TAB` / `Shift-TAB` to move between columns
    - If a column contains a BLOB image, it automatically previews in a child frame
@@ -186,22 +187,16 @@ Doom Emacs - add to `config.el`:
    - Returns to schema browser
    - Press `q` to quit ELSQLite
 
-## Edit Mode vs Browse Mode
+## Mode Line
 
-ELSQLite automatically detects whether a query produces editable results:
+The mode line shows contextual information as you navigate:
 
-**Edit Mode** (shown as `[Edit: tablename]`):
-- Simple SELECT from single table
-- No JOINs, GROUP BY, DISTINCT, or aggregate functions
-- Indicates the table could be edited (editing functionality planned)
+- **`ELSQLite[database.db] [Schema Viewer]`** - Viewing schema browser
+- **`ELSQLite[database.db] [tablename]`** - Viewing a table
+- **`ELSQLite[database.db] [Query]`** - Viewing custom query results
+- **`(column TYPE = value)`** - Current field info (appears when cursor is on a cell)
 
-**Browse Mode** (shown as `[Browse]` or `[Browse: tablename]`):
-- Complex queries (JOINs, aggregates, etc.)
-- Schema browser view
-- Read-only display
-- Navigation works normally
-
-The SQL panel teaches you as you go—watch how queries change when you navigate and execute custom SQL!
+Example: `ELSQLite[mydb.db] [users] (name TEXT = John Doe)`
 
 ## Architecture
 
@@ -240,7 +235,6 @@ M-x ert RET t RET
 - [x] SQL panel bidirectional sync
 - [x] Execute custom queries
 - [x] Query complexity detection
-- [x] Edit/browse mode switching
 - [x] Context-aware SQL completion
 - [x] Query history (M-p/M-n)
 - [x] Query restoration after modifications
@@ -272,11 +266,11 @@ This dual-input model serves both SQL novices and experts. The visible SQL panel
 
 ### Why Bidirectional Sync?
 
-Most database tools have separate "query mode" and "browse mode". ELSQLite unifies them. The same view works both ways:
+Most database tools separate browsing from querying. ELSQLite unifies them. The same view works both ways:
 - **Bottom-up**: Navigate data visually, SQL appears
 - **Top-down**: Write SQL, data appears
 
-You never think "am I in the right mode?"—you just work, and the tool adapts.
+No mode switching, no context juggling—just work naturally and the tool adapts.
 
 ## Configuration
 
@@ -314,8 +308,9 @@ emacs --batch -L . -L tests -l tests/elsqlite-test.el -f ert-run-tests-batch-and
 
 ## Contributing
 
-Contributions welcome! Please:
+Contributions welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
+Quick guidelines:
 1. Write tests for new features
 2. Follow existing code style
 3. Update README for user-facing changes
@@ -323,8 +318,10 @@ Contributions welcome! Please:
 
 ## License
 
-GPL-3.0-or-later
+GPL-3.0-or-later - See [LICENSE](LICENSE) for full text.
 
-## Credits
+## Author
 
-Inspired by the need for a native Emacs database browser that teaches SQL while you use it. Built with ❤️ for the Emacs community.
+Copyright (C) 2026 Dusan Popovic
+
+A native Emacs SQLite browser that teaches SQL while you use it.
