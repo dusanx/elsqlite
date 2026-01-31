@@ -48,15 +48,15 @@ cd elsqlite
 
 ### From Source (Doom Emacs)
 
-1. Clone this repository:
+1. Clone this repository to any location:
 ```bash
-git clone https://github.com/dusanx/elsqlite.git ~/.config/doom/local/elsqlite
+git clone https://github.com/dusanx/elsqlite.git ~/path/to/elsqlite
 ```
 
 2. Add to `~/.config/doom/config.el`:
 ```elisp
-;; Load elsqlite from local directory
-(add-to-load-path! "~/.config/doom/local/elsqlite")
+;; Load elsqlite from your clone location
+(add-to-list 'load-path (expand-file-name "~/path/to/elsqlite"))
 (require 'elsqlite)
 
 ;; Optional: Auto-open .db files in ELSQLite
