@@ -22,7 +22,7 @@ Before contributing, please understand ELSQLite's core philosophy:
 
 1. Fork and clone the repository:
 ```bash
-git clone https://github.com/yourusername/elsqlite.git
+git clone https://github.com/dusanx/elsqlite.git
 cd elsqlite
 ```
 

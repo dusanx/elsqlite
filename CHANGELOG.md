@@ -43,5 +43,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Schema caching for fast completion
 - Modeline shows edit/browse mode and pagination info
 
-[Unreleased]: https://github.com/yourusername/elsqlite/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/yourusername/elsqlite/releases/tag/v0.1.0
+[Unreleased]: https://github.com/dusanx/elsqlite/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/dusanx/elsqlite/releases/tag/v0.1.0

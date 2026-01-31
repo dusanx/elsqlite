@@ -7,7 +7,7 @@
 ;; Version: 0.1.0
 ;; Package-Requires: ((emacs "29.1"))
 ;; Keywords: tools, databases, sqlite
-;; URL: https://github.com/yourusername/elsqlite
+;; URL: https://github.com/dusanx/elsqlite
 ;; License: GPL-3.0-or-later
 
 ;; This program is free software: you can redistribute it and/or modify

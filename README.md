@@ -34,7 +34,7 @@ If this returns `t`, you're good to go!
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/yourusername/elsqlite.git
+git clone https://github.com/dusanx/elsqlite.git
 cd elsqlite
 ```
 
@@ -48,7 +48,7 @@ cd elsqlite
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/yourusername/elsqlite.git ~/.config/doom/local/elsqlite
+git clone https://github.com/dusanx/elsqlite.git ~/.config/doom/local/elsqlite
 ```
 
 2. Add to `~/.config/doom/config.el`:
