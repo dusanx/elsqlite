@@ -255,8 +255,9 @@ Called via `window-selection-change-functions'."
 (defun elsqlite-table--handle-image-preview ()
   "Show or hide image preview based on current column and cell content.
 Only shows preview when cursor is in the table buffer, not in SQL buffer."
-  (if (not (derived-mode-p 'elsqlite-table-mode))
-      ;; Not in table buffer - close any preview
+  (if (or (not (display-graphic-p))
+          (not (derived-mode-p 'elsqlite-table-mode)))
+      ;; Not in graphical mode or not in table buffer - close any preview
       (elsqlite-table--close-image-frame)
 
     ;; In table buffer - handle preview normally

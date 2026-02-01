@@ -2,9 +2,9 @@
 
 ;; Copyright (C) 2026 Dusan Popovic
 
-;; Author: ELSQLite Contributors
-;; Maintainer: ELSQLite Contributors
-;; Version: 0.1.0
+;; Author: Dusan Popovic <dpx@binaryapparatus.com>
+;; Maintainer: Dusan Popovic <dpx@binaryapparatus.com>
+;; Version: 0.2.0
 ;; Package-Requires: ((emacs "29.1"))
 ;; Keywords: tools, databases, sqlite
 ;; URL: https://github.com/dusanx/elsqlite
