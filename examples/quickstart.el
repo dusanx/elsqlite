@@ -23,6 +23,9 @@
 (add-to-list 'load-path (expand-file-name ".."))
 (require 'elsqlite)
 
+;; Optional: Set up Evil mode keybindings (if you use Evil)
+;; (elsqlite-evil-setup)
+
 ;; Example 1: Check if SQLite is available
 (message "SQLite available: %s" (sqlite-available-p))
 ;; => SQLite available: t

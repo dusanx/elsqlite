@@ -2,6 +2,22 @@
 
 ;; Copyright (C) 2026 Dusan Popovic
 
+;; Author: Dusan Popovic <dpx@binaryapparatus.com>
+;; License: GPL-3.0-or-later
+
+;; This program is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 ;;; Commentary:
 
 ;; This module implements the results/business panel for ELSQLite:
@@ -240,6 +256,7 @@ Returns a formatted database schema dump.")
 
 (defun elsqlite-table--on-window-selection-change (frame)
   "Close image preview when window focus leaves a table buffer.
+FRAME is the frame where window selection changed.
 Called via `window-selection-change-functions'."
   (when frame
     ;; Check all windows in the frame
@@ -363,7 +380,7 @@ Only shows preview when cursor is in the table buffer, not in SQL buffer."
 
 (defun elsqlite-table--get-current-field-info ()
   "Get information about the field at point: (name type value)."
-  (when (and (eq major-mode 'elsqlite-table-mode)
+  (when (and (derived-mode-p 'elsqlite-table-mode)
              (not (eq elsqlite-table--view-type 'schema)))
     (let* ((col-index (elsqlite-table--current-column))
            (entry (tabulated-list-get-entry)))
@@ -447,7 +464,7 @@ Returns alist of (column-name . type-string)."
 
 (defun elsqlite-table--calculate-column-widths (columns rows)
   "Calculate optimal column widths based on COLUMNS and ROWS content.
-Returns a vector of column specifications for tabulated-list-format."
+Returns a vector of column specifications for `tabulated-list-format'."
   (let* ((num-cols (length columns))
          (widths (make-vector num-cols 0)))
 
@@ -472,8 +489,8 @@ Returns a vector of column specifications for tabulated-list-format."
               collect (list col (aref widths i) t)))))
 
 (defun elsqlite-table--make-header-row ()
-  "Create a header row from tabulated-list-format.
-Returns a list entry suitable for tabulated-list-entries."
+  "Create a header row from `tabulated-list-format'.
+Returns a list entry suitable for `tabulated-list-entries'."
   (when tabulated-list-format
     (let ((header-cols (cl-loop for col across tabulated-list-format
                                 for name = (nth 0 col)
@@ -740,7 +757,7 @@ COLUMN-REF can be \\='column or \\='table.column."
 
 (define-derived-mode elsqlite-schema-mode sql-mode "ELSQLite-Schema"
   "Major mode for viewing database schema with folding support.
-Based on sql-mode with outline support for folding."
+Based on `sql-mode' with outline support for folding."
   :group 'elsqlite
 
   ;; SQL syntax highlighting is inherited from sql-mode
@@ -969,7 +986,7 @@ If result contains \\='elsqlite_schema_dump column, show schema viewer instead."
             (other-panel elsqlite--other-panel))
 
         ;; Switch to table mode if not already in it
-        (unless (eq major-mode 'elsqlite-table-mode)
+        (unless (derived-mode-p 'elsqlite-table-mode)
           (elsqlite-table-mode))
 
         ;; Always ensure buffer-local vars are set (not just on mode switch)
@@ -1120,7 +1137,7 @@ If result contains \\='elsqlite_schema_dump column, show schema viewer instead."
 ;;; Column Navigation
 
 (defun elsqlite-table--get-column-positions ()
-  "Get list of column start positions based on tabulated-list-format.
+  "Get list of column start positions based on `tabulated-list-format'.
 Returns list of (start-pos . end-pos) for each column.
 Accounts for inter-column spacing (2 spaces between columns)."
   (when tabulated-list-format
@@ -1215,8 +1232,11 @@ Accounts for inter-column spacing (2 spaces between columns)."
 
 ;;; Evil Mode Integration
 
-;; Set up Evil keybindings automatically when Evil is loaded
-(with-eval-after-load 'evil
+;;;###autoload
+(defun elsqlite-evil-setup ()
+  "Set up Evil mode keybindings for ELSQLite.
+Call this function in your config if you use Evil mode."
+  (interactive)
   (when (fboundp 'evil-define-key*)
     ;; Schema viewer mode
     (evil-define-key* 'normal elsqlite-schema-mode-map

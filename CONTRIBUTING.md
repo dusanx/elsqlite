@@ -57,9 +57,9 @@ Load the package in a running Emacs session:
 
 ```elisp
 ;; In *scratch* buffer
-(add-to-list 'load-path "/path/to/elsqlite")
+(add-to-list 'load-path (expand-file-name "~/path/to/elsqlite"))
 (require 'elsqlite)
-(elsqlite "/path/to/elsqlite/tests/test.db")
+(elsqlite (expand-file-name "~/path/to/elsqlite/tests/test.db"))
 ```
 
 ### Writing Tests

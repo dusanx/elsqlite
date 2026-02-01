@@ -1,4 +1,4 @@
-;;; elsqlite.el --- SQLite browser for Emacs -*- lexical-binding: t; -*-
+;;; elsqlite.el --- SQLite browser -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2026 Dusan Popovic
 
@@ -248,7 +248,7 @@ it will open in ELSQLite instead of as raw bytes."
 ;;; Aliases
 
 ;;;###autoload
-(defalias 'sqlite-browser 'elsqlite)
+(defalias 'elsqlite-browser #'elsqlite)
 
 ;;; Auto-open SQLite files
 

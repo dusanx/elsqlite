@@ -32,60 +32,82 @@ If this returns `t`, you're good to go!
 
 ## Installation
 
-### From Source (Vanilla Emacs)
+Choose the section that matches your setup and copy-paste the entire code block:
 
-1. Clone this repository:
-```bash
-git clone https://github.com/dusanx/elsqlite.git
-cd elsqlite
-```
+### Vanilla Emacs + MELPA (coming soon)
 
-2. Add to your `init.el`:
+Add to your `init.el`:
 ```elisp
-(add-to-list 'load-path "/path/to/elsqlite")
-(require 'elsqlite)
+(use-package elsqlite
+  :ensure t
+  ;; Optional: Auto-open .db files in ELSQLite
+  :config
+  (elsqlite-enable-auto-open)
+  ;; Optional: Evil mode keybindings
+  ;; (elsqlite-evil-setup)
+  )
 ```
 
-### From Source (Doom Emacs)
+### Vanilla Emacs + From Source
 
-1. Clone this repository to any location:
+1. Clone the repository:
 ```bash
 git clone https://github.com/dusanx/elsqlite.git ~/path/to/elsqlite
 ```
 
-2. Add to `~/.config/doom/config.el`:
+2. Add to your `init.el`:
 ```elisp
-;; Load elsqlite from your clone location
 (add-to-list 'load-path (expand-file-name "~/path/to/elsqlite"))
 (require 'elsqlite)
 
 ;; Optional: Auto-open .db files in ELSQLite
 (elsqlite-enable-auto-open)
+
+;; Optional: Evil mode keybindings
+;; (elsqlite-evil-setup)
 ```
 
-3. Restart Doom or reload config:
-```bash
-doom sync
-# or in Emacs: SPC h r r (doom/reload)
-```
+### Doom Emacs + MELPA (coming soon)
 
-### From MELPA (coming soon)
-
-**Vanilla Emacs:**
+Add to `~/.doom.d/packages.el`:
 ```elisp
-(use-package elsqlite
-  :ensure t)
-```
-
-**Doom Emacs:**
-```elisp
-;; In packages.el
 (package! elsqlite)
-
-;; In config.el
-(use-package! elsqlite
-  :commands (elsqlite sqlite-browser))
 ```
+
+Add to `~/.doom.d/config.el`:
+```elisp
+(use-package! elsqlite
+  :commands (elsqlite elsqlite-browser)
+  :config
+  ;; Optional: Auto-open .db files in ELSQLite
+  (elsqlite-enable-auto-open)
+  ;; Optional: Evil mode keybindings
+  ;; (elsqlite-evil-setup)
+  )
+```
+
+Then run: `doom sync`
+
+### Doom Emacs + From Source
+
+1. Clone the repository:
+```bash
+git clone https://github.com/dusanx/elsqlite.git ~/path/to/elsqlite
+```
+
+2. Add to `~/.doom.d/config.el`:
+```elisp
+(add-to-list 'load-path (expand-file-name "~/path/to/elsqlite"))
+(require 'elsqlite)
+
+;; Optional: Auto-open .db files in ELSQLite
+(elsqlite-enable-auto-open)
+
+;; Optional: Evil mode keybindings
+;; (elsqlite-evil-setup)
+```
+
+Then reload config: `SPC h r r` or restart Emacs
 
 ## Usage
 
@@ -94,7 +116,7 @@ doom sync
 **Interactive (M-x):**
 ```elisp
 M-x elsqlite RET /path/to/database.db RET
-M-x sqlite-browser RET   ;; alias
+M-x elsqlite-browser RET   ;; alias
 ```
 
 **Programmatic (from Elisp):**
@@ -139,7 +161,7 @@ Doom Emacs - add to `config.el`:
 **Window Management**:
 - `C-x o` - Switch between SQL and results panels
 - `C-x 0` - Delete current window (closes database if it's an ELSQLite window)
-- Evil users: `C-w w`, `C-w h/j/k/l` work as expected
+- Evil users: `C-w w`, `C-w h/j/k/l` work as expected (call `elsqlite-evil-setup` for mode-specific bindings)
 
 **SQL Panel**:
 - `C-c C-c` - Execute query
