@@ -3,7 +3,7 @@
 A native Emacs SQLite browser that provides a unified interface for exploring and editing SQLite databases. Built on the philosophy that "everything is SQL"—the UI is a convenient way to build and modify queries, with bidirectional sync between SQL and visual representations.
 
 ![ELSQLite - Table view with BLOB image preview](screenshots/elsqlite.png)
-*Table browser with automatic BLOB image preview in child frame*
+*ELSQLite: Query browser on top, SQL editor on bottom, automatic BLOB image preview in child frame*
 
 ## Features
 
