@@ -77,7 +77,7 @@
 (defun elsqlite-sql--query-is-read-only-p (sql)
   "Return t if SQL is a read-only query (SELECT, WITH, EXPLAIN, PRAGMA)."
   (let ((trimmed-sql (string-trim sql)))
-    (or (string-match-p "\\`\\(SELECT\\|WITH\\|EXPLAIN\\|PRAGMA\\)\\s-"
+    (or (string-match-p "\\`\\(SELECT\\|WITH\\|EXPLAIN\\|PRAGMA\\)\\>"
                         (upcase trimmed-sql))
         ;; Empty string is considered read-only (triggers schema view)
         (string-empty-p trimmed-sql))))
