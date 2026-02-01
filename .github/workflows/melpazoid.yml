@@ -22,7 +22,7 @@ jobs:
       env:
         LOCAL_REPO: ${{ github.workspace }}
         # RECIPE is your recipe as written for MELPA:
-        RECIPE: (elsqlite :repo "dusanx/elsqlite" :fetcher github :files ("elsqlite.el" "elsqlite-db.el" "elsqlite-sql.el" "elsqlite-table.el"))
+        RECIPE: (elsqlite :fetcher github :repo "dusanx/elsqlite" :files ("elsqlite.el" "elsqlite-db.el" "elsqlite-sql.el" "elsqlite-table.el"))
         # set this to true if warnings should be treated as errors:
         WARN_IS_ERROR: false
         # set this to false (or remove it) if the package isn't on MELPA:
