@@ -17,6 +17,7 @@
 
 ;; Forward declarations
 (defvar elsqlite--db)
+(defvar elsqlite--sql-buffer)
 (defvar elsqlite--results-buffer)
 (defvar elsqlite-table--magic-schema-query)
 (declare-function elsqlite-table-execute-query "elsqlite-table")

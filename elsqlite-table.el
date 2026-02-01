@@ -24,6 +24,7 @@
 (defvar elsqlite--other-panel)
 (declare-function elsqlite-quit "elsqlite")
 (declare-function elsqlite-sql-set-query "elsqlite-sql")
+(declare-function elsqlite-sql-execute "elsqlite-sql")
 
 ;;; Customization
 
@@ -106,15 +107,6 @@ Returns a formatted database schema dump.")
 (defvar-local elsqlite-table--total-rows nil
   "Total number of rows in current table (nil if unknown).")
 
-(defvar-local elsqlite-table--sort-column nil
-  "Column name to sort by, or nil.")
-
-(defvar-local elsqlite-table--sort-direction 'asc
-  "Sort direction: `asc\\=' or `desc\\='.")
-
-(defvar-local elsqlite-table--where-clause nil
-  "WHERE clause for filtering, or nil.")
-
 (defvar-local elsqlite-table--column-types nil
   "Alist of (column-name . type) for current table/query.")
 
@@ -175,13 +167,6 @@ Returns a formatted database schema dump.")
                                 :max-height max-preview-height))
            (image-size (image-size image t))
            (img-width (car image-size))
-           (img-height (cdr image-size))
-           ;; Get window position relative to parent frame for centering
-           (win-edges (window-edges window t))
-           (win-left-rel (nth 0 win-edges))
-           (win-top-rel (nth 1 win-edges))
-           (win-width-px (- (nth 2 win-edges) (nth 0 win-edges)))
-           (win-height-px (- (nth 3 win-edges) (nth 1 win-edges)))
            ;; Calculate position for bottom-right of entire FRAME (not window/pane)
            (preview-width-px max-preview-width)
            (preview-height-px max-preview-height)
@@ -210,8 +195,8 @@ Returns a formatted database schema dump.")
       ;; Create child frame, temporarily disabling persp-mode hooks to prevent workspace creation
       (setq elsqlite-table--image-frame
             (let ((after-make-frame-functions nil)  ;; Disable all after-make-frame hooks
-                  (persp-init-frame-function nil)   ;; Disable persp-mode frame init
-                  (persp-mode-hook nil))            ;; Disable persp-mode hooks
+                  (_persp-init-frame-function nil)   ;; Disable persp-mode frame init
+                  (_persp-mode-hook nil))            ;; Disable persp-mode hooks
               (make-frame `((parent-frame . ,parent-frame)
                             (left . ,frame-x)
                             (top . ,frame-y)
@@ -242,8 +227,8 @@ Returns a formatted database schema dump.")
                             (z-group . above)))))
 
       ;; Switch to buffer without triggering persp-mode
-      (let ((persp-add-buffer-on-find-file nil)
-            (persp-add-buffer-on-after-change-major-mode nil))
+      (let ((_persp-add-buffer-on-find-file nil)
+            (_persp-add-buffer-on-after-change-major-mode nil))
         (with-selected-frame elsqlite-table--image-frame
           (switch-to-buffer buffer)
           ;; Center the content vertically and horizontally
@@ -269,7 +254,7 @@ Called via `window-selection-change-functions'."
 
 (defun elsqlite-table--handle-image-preview ()
   "Show or hide image preview based on current column and cell content.
-Only shows preview when cursor is in the table/content buffer, not in SQL buffer."
+Only shows preview when cursor is in the table buffer, not in SQL buffer."
   (if (not (derived-mode-p 'elsqlite-table-mode))
       ;; Not in table buffer - close any preview
       (elsqlite-table--close-image-frame)
@@ -1127,79 +1112,6 @@ If result contains \\='elsqlite_schema_dump column, show schema viewer instead."
             (require 'elsqlite-sql)
             (elsqlite-sql-set-query sql)
             (elsqlite-sql-execute)))))))
-
-;;; Sorting
-
-(defun elsqlite-table-sort-by-column ()
-  "Sort table by column at point."
-  (interactive)
-  (unless elsqlite-table--current-table
-    (user-error "Sorting only available for table views"))
-
-  (let* ((col-num (current-column))
-         ;; Find which table column we're in
-         (col-widths (mapcar (lambda (col) (nth 1 col)) tabulated-list-format))
-         (target-col 0)
-         (cumulative-width 0))
-
-    ;; Calculate which column based on character position
-    (while (and (< target-col (length col-widths))
-                (> col-num (+ cumulative-width (nth target-col col-widths))))
-      (setq cumulative-width (+ cumulative-width
-                                (nth target-col col-widths)
-                                tabulated-list-padding))
-      (setq target-col (1+ target-col)))
-
-    (when (>= target-col (length tabulated-list-format))
-      (user-error "No column at point"))
-
-    (let* ((col-name (car (aref tabulated-list-format target-col)))
-           (same-column (equal col-name elsqlite-table--sort-column))
-           (new-direction (if same-column
-                              (if (eq elsqlite-table--sort-direction 'asc)
-                                  'desc
-                                'asc)
-                            'asc)))
-
-      (setq elsqlite-table--sort-column col-name
-            elsqlite-table--sort-direction new-direction
-            elsqlite-table--current-offset 0)
-
-      ;; Rebuild query with ORDER BY
-      (let ((sql (format "SELECT * FROM %s ORDER BY %s %s LIMIT %d OFFSET 0"
-                         elsqlite-table--current-table
-                         col-name
-                         (if (eq new-direction 'asc) "ASC" "DESC")
-                         elsqlite-table--page-size)))
-        (setq elsqlite-table--current-query sql)
-        (elsqlite-table-execute-query sql))
-
-      (message "Sorted by %s %s" col-name (upcase (symbol-name new-direction))))))
-
-;;; Filtering
-
-(defun elsqlite-table-add-filter ()
-  "Add a WHERE clause filter to current table."
-  (interactive)
-  (unless elsqlite-table--current-table
-    (user-error "Filtering only available for table views"))
-
-  (let* ((where (read-string "WHERE clause (without WHERE keyword): "
-                             elsqlite-table--where-clause))
-         (sql (format "SELECT * FROM %s WHERE %s LIMIT %d OFFSET %d"
-                      elsqlite-table--current-table
-                      where
-                      elsqlite-table--page-size
-                      elsqlite-table--current-offset)))
-
-    (setq elsqlite-table--where-clause where
-          elsqlite-table--current-query sql)
-
-    (condition-case err
-        (elsqlite-table-execute-query sql)
-      (error
-       (setq elsqlite-table--where-clause nil)
-       (signal (car err) (cdr err))))))
 
 ;;; Column Navigation
 
